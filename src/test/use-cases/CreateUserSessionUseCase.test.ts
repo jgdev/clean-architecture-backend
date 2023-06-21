@@ -1,10 +1,13 @@
+import { randomUUID } from "crypto";
+
 import User, { UserStatus } from "@/core/entities/User";
 import ICacheRepository from "@/core/repository/CacheRepository";
 import IEntityRepository from "@/core/repository/EntityRepository";
 import CreateUserSessionUseCase from "@/core/use-cases/CreateUserSessionUseCase";
+import SessionService from "@/core/services/auth/SessionService";
+
 import createInMemoryRepository from "../utils/InMemoryRepository";
 import { createInMemoryCacheRepository } from "../utils/InMemoryCacheRepository";
-import { randomUUID } from "crypto";
 
 describe("UseCase - CreateUserSession", () => {
   let createUserSessionUseCase: CreateUserSessionUseCase;
@@ -26,24 +29,19 @@ describe("UseCase - CreateUserSession", () => {
       usersRepository,
       cacheRepository,
     });
+    jest.clearAllMocks();
   });
 
   test("should generate a session id with the given credentials", async () => {
-    expect(
-      await cacheRepository.get<string[]>(`session-${fakeUser.email}`)
-    ).toBe(undefined);
+    const expectedResult = randomUUID();
+    jest
+      .spyOn(SessionService.prototype, "createSession")
+      .mockImplementation(() => Promise.resolve(expectedResult));
     const sessionId = await createUserSessionUseCase.execute({
       email: fakeUser.email,
       password: fakeUser.password,
     });
-    const sessions = await cacheRepository.get<string[]>(
-      `session-${fakeUser.email}`,
-      []
-    );
-    expect(sessions[0]).toMatch(
-      /^[0-9(a-f|A-F)]{8}-[0-9(a-f|A-F)]{4}-4[0-9(a-f|A-F)]{3}-[89ab][0-9(a-f|A-F)]{3}-[0-9(a-f|A-F)]{12}$/gim
-    );
-    expect(sessionId).toBe(sessions[0]);
+    expect(sessionId).toBe(expectedResult);
   });
 
   test("should throw an error if the email and password doesn't match", async () => {
@@ -84,25 +82,5 @@ describe("UseCase - CreateUserSession", () => {
     } catch (err: any) {
       expect(err.message).toMatch(/Invalid parameter password/);
     }
-  });
-
-  test("should expire an old session if the user reaches the maximum session limit per user", async () => {
-    await cacheRepository.set(`session-${fakeUser.email}`, [
-      randomUUID(),
-      randomUUID(),
-      randomUUID(),
-    ]);
-    const sessionId = await createUserSessionUseCase.execute({
-      email: fakeUser.email,
-      password: fakeUser.password,
-    });
-    const sessions = await cacheRepository.get<string[]>(
-      `session-${fakeUser.email}`,
-      []
-    );
-    expect(sessions[0]).toMatch(
-      /^[0-9(a-f|A-F)]{8}-[0-9(a-f|A-F)]{4}-4[0-9(a-f|A-F)]{3}-[89ab][0-9(a-f|A-F)]{3}-[0-9(a-f|A-F)]{12}$/gim
-    );
-    expect(sessionId).toBe(sessions[0]);
   });
 });

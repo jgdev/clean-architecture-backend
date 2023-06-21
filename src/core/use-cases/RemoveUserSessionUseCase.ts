@@ -1,6 +1,8 @@
 import User from "@/core/entities/User";
 import IEntityRepository from "@/core/repository/EntityRepository";
-import ICacheRepository from "../repository/CacheRepository";
+import ICacheRepository from "@/core/repository/CacheRepository";
+import SessionService from "@/core/services/auth/SessionService";
+
 import { isValidEmail } from "../utils/validation";
 import ValidatorError from "../errors/ValidationError";
 
@@ -22,17 +24,14 @@ export default class RemoveUserSessionUseCase {
   }
 
   async execute(params: RemoveUserSessionDTO) {
+    const sessionService = new SessionService({
+      cacheRepository: this.cacheRepository,
+      usersRepository: this.usersRepository,
+    });
     if (!params.email || !isValidEmail(params.email))
       throw new ValidatorError("Invalid parameter email");
     if (!params.sessionId)
       throw new ValidatorError("Invalid parameter sessionId");
-    const sessions = await this.cacheRepository.get<string[]>(
-      `session-${params.email}`,
-      []
-    );
-    await this.cacheRepository.set(
-      `session-${params.email}`,
-      sessions.filter((id) => id !== params.sessionId)
-    );
+    return sessionService.removeSession(params.email, params.sessionId);
   }
 }

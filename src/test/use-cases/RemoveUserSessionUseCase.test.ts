@@ -1,10 +1,13 @@
+import { randomUUID } from "crypto";
+
 import User from "@/core/entities/User";
 import ICacheRepository from "@/core/repository/CacheRepository";
 import IEntityRepository from "@/core/repository/EntityRepository";
 import RemoveUserSessionUseCase from "@/core/use-cases/RemoveUserSessionUseCase";
+import SessionService from "@/core/services/auth/SessionService";
+
 import createInMemoryRepository from "../utils/InMemoryRepository";
 import { createInMemoryCacheRepository } from "../utils/InMemoryCacheRepository";
-import { randomUUID } from "crypto";
 
 describe("UseCase - CreateUserSession", () => {
   let removeUserSessionUseCase: RemoveUserSessionUseCase;
@@ -21,22 +24,13 @@ describe("UseCase - CreateUserSession", () => {
   });
 
   test("should remove a session id properly", async () => {
+    const spy = jest.spyOn(SessionService.prototype, "removeSession");
     const sessionToRemove = randomUUID();
-    await cacheRepository.set(`session-test@test`, [
-      randomUUID(),
-      sessionToRemove,
-      randomUUID(),
-    ]);
     await removeUserSessionUseCase.execute({
       sessionId: sessionToRemove,
       email: "test@test",
     });
-    const sessions = await cacheRepository.get<string[]>(
-      `session-test@test`,
-      []
-    );
-    expect(sessions.length).toBe(2);
-    expect(sessions.includes(sessionToRemove)).toBe(false);
+    expect(spy).toHaveBeenCalledWith("test@test", sessionToRemove);
   });
 
   test("should validate fields", async () => {
