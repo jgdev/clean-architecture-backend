@@ -6,13 +6,13 @@ import { ErrorCode } from "@/core/errors";
 
 import { Api, ApiDeps } from "..";
 
-export const createSessionMiddleware = (app: Api, deps: ApiDeps) => {
+export const createSessionMiddleware = (deps: ApiDeps, skipAuth: boolean) => {
   return {
     withSession: async (ctx: Context, next: Next) => {
       let sessionId = ctx.request.headers["x-session-id"] as string;
       let user = undefined;
 
-      if (process.env.SKIP_AUTH && process.env.IN_MEMORY_REPOSITORY) {
+      if (skipAuth) {
         user = await deps.usersRepository.findOne({});
         sessionId = randomUUID();
       } else {

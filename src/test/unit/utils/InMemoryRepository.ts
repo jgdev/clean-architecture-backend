@@ -19,7 +19,6 @@ export const createInMemoryRepository = <T>(
   let records: T[] = initialData;
 
   const findByParams = (params: SearchParams<T>) => (record: any) => {
-    if (typeof params === "string") return (record as any).id === params;
     return Object.keys(params).reduce((result, key: any) => {
       return result && record[key] === (params as any)[key];
     }, true);
@@ -35,21 +34,20 @@ export const createInMemoryRepository = <T>(
   };
 
   const findAll = async (
-    searchParams?: SearchParams<T>,
+    searchParams: SearchParams<T>,
     paginatedParams?: PaginatedParams<T>
   ) => {
     const skip = paginatedParams?.skip || 0;
     const limit = paginatedParams?.limit || DEFAULT_ROWS_LIMIT;
-    let data = records.filter(findByParams(searchParams || {}));
+    let data = records.filter(findByParams(searchParams));
     if (paginatedParams?.sortBy) {
       const sortBy = paginatedParams.sortBy;
       data = data.sort((a: any, b: any) => {
         if (a[sortBy] > b[sortBy]) {
-          return paginatedParams?.orderBy === "asc" ? 1 : -1;
-        } else if (a[sortBy] < b[sortBy]) {
-          return paginatedParams?.orderBy === "asc" ? -1 : 1;
+          return paginatedParams.orderBy === "asc" ? 1 : -1;
+        } else {
+          return paginatedParams.orderBy === "asc" ? -1 : 1;
         }
-        return 0;
       });
     }
     const result = data.slice(skip, skip + limit);

@@ -36,8 +36,7 @@ export default class CreateRecordUseCase {
     });
     if (!operation) throw new NotFoundError("Operation not found");
 
-    if (!params.operationId)
-      throw new ValidatorError("Invalid parameter userId");
+    if (!params.userId) throw new ValidatorError("Invalid parameter userId");
     const user = await this.usersRepository.findOne({ id: params.userId });
     if (!user) throw new NotFoundError("User not found");
 

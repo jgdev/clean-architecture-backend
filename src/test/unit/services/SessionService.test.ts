@@ -44,9 +44,20 @@ describe("Service - SessionService", () => {
     expect(Object.keys(sessions).includes(sessionId)).toBe(true);
   });
 
+  test("should check if the user exists generating a session", async () => {
+    expect.assertions(1);
+    const email = "test2@test";
+    try {
+      await sessionService.createSession(email);
+    } catch (err: any) {
+      expect(err.message).toBe("User not found");
+    }
+  });
+
   test("should expire an old session if the user reaches the maximum session limit per user", async () => {
     const userId = fakeUser.id;
     const email = fakeUser.email;
+    SessionService.USER_SESSION_LIMIT = 3;
     await cacheRepository.set(`session-${email}`, {
       [randomUUID()]: { userId, email },
       [randomUUID()]: { userId, email },
@@ -78,5 +89,45 @@ describe("Service - SessionService", () => {
 
     expect(Object.keys(sessions).length).toBe(2);
     expect(Object.keys(sessions).includes(sessionToRemove)).toBe(false);
+  });
+
+  test("shoudl return an User using the sessionId", async () => {
+    const fakeUser2 = await usersRepository.create(
+      new User({
+        balance: 0,
+        email: "test2@test",
+        status: UserStatus.ACTIVE,
+      })
+    );
+    const sessionId = await sessionService.createSession(fakeUser2.email);
+    const user = await sessionService.getUserBySessionId(sessionId);
+    expect(user.id).toBe(fakeUser2.id);
+  });
+
+  test("should throw an Error if the user is in an invalid status", async () => {
+    expect.assertions(1);
+    const fakeUser2 = await usersRepository.create(
+      new User({
+        balance: 0,
+        email: "test2@test",
+        status: UserStatus.INACTIVE,
+      })
+    );
+    const sessionId = await sessionService.createSession(fakeUser2.email);
+    try {
+      await sessionService.getUserBySessionId(sessionId);
+    } catch (err: any) {
+      expect(err.message).toBe("Invalid user state");
+    }
+  });
+
+  test("should throw an error if the session doesn't exist", async () => {
+    expect.assertions(1);
+    const sessionId = randomUUID();
+    try {
+      await sessionService.getUserBySessionId(sessionId);
+    } catch (err: any) {
+      expect(err.message).toBe("Invalid or expired session");
+    }
   });
 });

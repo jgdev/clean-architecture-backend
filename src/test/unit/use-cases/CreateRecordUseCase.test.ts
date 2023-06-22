@@ -73,33 +73,6 @@ describe("UseCase - Create Record", () => {
     });
   });
 
-  test("should throw an error if the user is invalid or does not exist", async () => {
-    expect.assertions(2);
-    createRecordUseCase = new CreateRecordUseCase({
-      recordsRepository,
-      usersRepository,
-      operationsRepository,
-    });
-    try {
-      await createRecordUseCase.execute({
-        userId: randomUUID(),
-        operationId: fakeOperation.id,
-        operationArgs: [1, 2],
-      });
-    } catch (err: any) {
-      expect(err.message).toMatch(/User not found/);
-    }
-    try {
-      await createRecordUseCase.execute({
-        userId: "",
-        operationId: fakeOperation.id,
-        operationArgs: [1, 2],
-      });
-    } catch (err: any) {
-      expect(err.message).toMatch(/User not found/);
-    }
-  });
-
   test("should throw an error if the user doesn't have enough balance performing the operation", async () => {
     expect.assertions(2);
     try {
@@ -120,12 +93,13 @@ describe("UseCase - Create Record", () => {
   });
 
   test("should validate parameters", async () => {
-    expect.assertions(2);
+    expect.assertions(4);
     createRecordUseCase = new CreateRecordUseCase({
       recordsRepository,
       usersRepository,
       operationsRepository,
     });
+
     try {
       await createRecordUseCase.execute({
         userId: randomUUID(),
@@ -134,6 +108,26 @@ describe("UseCase - Create Record", () => {
       });
     } catch (err: any) {
       expect(err.message).toMatch(/User not found/);
+    }
+
+    try {
+      await createRecordUseCase.execute({
+        userId: "",
+        operationId: fakeOperation.id,
+        operationArgs: [1, 2],
+      });
+    } catch (err: any) {
+      expect(err.message).toMatch(/Invalid parameter userId/);
+    }
+
+    try {
+      await createRecordUseCase.execute({
+        userId: fakeUser.id,
+        operationId: "",
+        operationArgs: [1, 2],
+      });
+    } catch (err: any) {
+      expect(err.message).toMatch(/Invalid parameter operationId/);
     }
 
     try {

@@ -7,7 +7,7 @@ import { ApiDeps } from "@/infrastructure/api";
 
 export default class CreateUserSessionController implements Controller {
   handle(apiDeps: ApiDeps, ctx: Context): Promise<any> {
-    const { email = "", password = "" } = ctx.request.body as any;
+    const { email, password } = ctx.request.body as any;
     return new CreateUserSessionUseCase(apiDeps).execute({
       email,
       password,

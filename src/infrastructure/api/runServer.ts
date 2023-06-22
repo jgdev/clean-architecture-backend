@@ -4,7 +4,7 @@ import { ApiDeps, createApi } from ".";
 import { APP_NAME } from "@/core/utils/logger";
 
 import { httpLogger } from "@/core/utils/logger";
-import { prepareTestEnvironment } from "@/test/utils/InMemory.bootstrap";
+import { prepareTestEnvironment } from "@/test/unit/utils/InMemory.bootstrap";
 
 dotenv.config();
 
@@ -27,7 +27,7 @@ export const getDependencies = async () => {
 (async () => {
   const httpPort = process.env.PORT || process.env.NODE_PORT || 3001;
   const apiDeps = await getDependencies();
-  const api = createApi(apiDeps);
+  const api = createApi(apiDeps, !!process.env.SKIP_AUTH);
   api.listen(httpPort, () => {
     httpLogger.info(`Api service running in http://localhost:${httpPort}/`);
   });

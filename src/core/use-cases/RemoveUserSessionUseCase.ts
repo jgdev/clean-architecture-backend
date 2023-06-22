@@ -23,7 +23,7 @@ export default class RemoveUserSessionUseCase {
     this.cacheRepository = deps.cacheRepository;
   }
 
-  async execute(params: RemoveUserSessionDTO) {
+  async execute(params: RemoveUserSessionDTO): Promise<void> {
     const sessionService = new SessionService({
       cacheRepository: this.cacheRepository,
       usersRepository: this.usersRepository,
@@ -32,6 +32,6 @@ export default class RemoveUserSessionUseCase {
       throw new ValidatorError("Invalid parameter email");
     if (!params.sessionId)
       throw new ValidatorError("Invalid parameter sessionId");
-    return sessionService.removeSession(params.email, params.sessionId);
+    await sessionService.removeSession(params.email, params.sessionId);
   }
 }

@@ -4,10 +4,6 @@ import ICacheRepository from "@/core/repository/CacheRepository";
 import IEntityRepository from "@/core/repository/EntityRepository";
 import { randomUUID } from "crypto";
 
-const USER_SESSION_LIMIT = /\d/gi.test(process.env.USER_SESSION_LIMIT || "")
-  ? parseInt(process.env.USER_SESSION_LIMIT || "", 10)
-  : 2;
-
 export type SessionById = {
   [key: string]: { userId: string; email: string; createdAt: number };
 };
@@ -15,6 +11,7 @@ export type SessionById = {
 export default class SessionService {
   private cacheRepository: ICacheRepository;
   private usersRepository: IEntityRepository<User>;
+  static USER_SESSION_LIMIT: number = 10;
 
   constructor(deps: {
     cacheRepository: ICacheRepository;
@@ -33,7 +30,7 @@ export default class SessionService {
       {}
     );
     const sessionKeys = Object.keys(sessions);
-    if (sessionKeys.length > USER_SESSION_LIMIT) {
+    if (sessionKeys.length >= SessionService.USER_SESSION_LIMIT) {
       const toRemove = sessionKeys[0];
       sessions = await this.removeSession(email, toRemove);
     }

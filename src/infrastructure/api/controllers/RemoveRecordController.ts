@@ -9,7 +9,7 @@ export default class RemoveRecordController implements Controller {
   handle(apiDeps: ApiDeps, ctx: Context): Promise<any> {
     const {
       session,
-      params: { recordId = "" },
+      params: { recordId },
     } = ctx;
     return new RemoveRecordUseCase(apiDeps).execute({
       recordId,

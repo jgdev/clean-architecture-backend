@@ -8,7 +8,7 @@ import { ApiDeps } from "@/infrastructure/api";
 export default class CreateRecordController implements Controller {
   handle(apiDeps: ApiDeps, ctx: Context): Promise<any> {
     const { session } = ctx;
-    const { operationId = "", operationArgs = [] } = ctx.request.body as any;
+    const { operationId, operationArgs } = ctx.request.body as any;
     return new CreateRecordUseCase(apiDeps).execute({
       operationArgs,
       operationId,

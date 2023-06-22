@@ -35,9 +35,9 @@ export type Api = Koa<Koa.DefaultState, ApiContext> & {
   withSession: (ctx: ApiContext, next: Koa.Next) => Promise<void> | void;
 };
 
-export const createApi = (deps: ApiDeps) => {
+export const createApi = (deps: ApiDeps, skipAuth: boolean) => {
   const app = new Koa<Koa.DefaultState, ApiContext>() as Api;
-  const { withSession } = createSessionMiddleware(app, deps);
+  const { withSession } = createSessionMiddleware(deps, skipAuth);
 
   app.withSession = withSession;
 

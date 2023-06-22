@@ -14,12 +14,17 @@ describe("InMemoryEntityRepository", () => {
   });
 
   test("should find an entry", async () => {
-    const initialData: any[] = [{ a: 1 }, { a: 2, b: 3 }, { a: 5, b: 4 }];
+    const initialData: any[] = [
+      { a: 1 },
+      { a: 1 },
+      { a: 2, b: 3 },
+      { a: 5, b: 4 },
+    ];
     const repository: ITestEntityRepository<any> =
       createInMemoryRepository(initialData);
     expect(repository.records).toMatchObject(initialData);
     const result = await repository.findOne({ a: 2 });
-    expect(result).toMatchObject(initialData[1]);
+    expect(result).toMatchObject(initialData[2]);
   });
 
   test("should find entries paginated", async () => {

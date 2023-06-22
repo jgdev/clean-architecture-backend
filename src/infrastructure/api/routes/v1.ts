@@ -13,11 +13,6 @@ import CreateRecordController from "../controllers/CreateRecordController";
 export const v1Routers = (app: Api, apiDeps: ApiDeps) => {
   const router = new Router({ prefix: "/v1" });
 
-  router.get("/sessions", async (ctx: Context, next: Next) => {
-    ctx.body = await apiDeps.cacheRepository.get("session-test@test", {});
-    await next();
-  });
-
   // auth routes
 
   router.post("/auth/sign-in", async (ctx: Context, next: Next) => {
@@ -29,7 +24,8 @@ export const v1Routers = (app: Api, apiDeps: ApiDeps) => {
     "/auth/sign-out",
     app.withSession,
     async (ctx: Context, next: Next) => {
-      ctx.body = await new RemoveUserSessionController().handle(apiDeps, ctx);
+      ctx.body =
+        (await new RemoveUserSessionController().handle(apiDeps, ctx)) || true;
       await next();
     }
   );
@@ -46,10 +42,14 @@ export const v1Routers = (app: Api, apiDeps: ApiDeps) => {
     await next();
   });
 
-  router.del("/records", app.withSession, async (ctx: Context, next: Next) => {
-    ctx.body = await new RemoveRecordController().handle(apiDeps, ctx);
-    await next();
-  });
+  router.del(
+    "/records/:recordId",
+    app.withSession,
+    async (ctx: Context, next: Next) => {
+      ctx.body = await new RemoveRecordController().handle(apiDeps, ctx);
+      await next();
+    }
+  );
 
   // operations
 

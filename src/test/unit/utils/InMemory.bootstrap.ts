@@ -53,5 +53,6 @@ export const prepareTestEnvironment = async () => {
     usersRepository,
     sessionService,
     operationsRepository,
+    testUser,
   };
 };

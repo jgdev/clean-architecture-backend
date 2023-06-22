@@ -8,13 +8,7 @@ import { ApiDeps } from "@/infrastructure/api";
 export default class ListRecordsController implements Controller {
   handle(apiDeps: ApiDeps, ctx: Context): Promise<any> {
     const { session } = ctx;
-    const {
-      limit = "",
-      skip = "",
-      operationType = undefined,
-      orderBy = "desc",
-      sortBy = "timestamp",
-    } = ctx.query;
+    const { limit, skip, operationType, orderBy, sortBy } = ctx.query;
 
     const limitParsed = parseInt(limit as string, 10);
     const skipParsed = parseInt(skip as string, 10);
@@ -25,8 +19,8 @@ export default class ListRecordsController implements Controller {
         operationType: operationType as any,
       },
       {
-        limit: isNaN(limitParsed) ? undefined : limitParsed,
-        skip: isNaN(skipParsed) ? undefined : skipParsed,
+        limit: limitParsed,
+        skip: skipParsed,
         orderBy: orderBy as any,
         sortBy: sortBy as any,
       }
