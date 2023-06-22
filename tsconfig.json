@@ -1,9 +1,8 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "target": "es2016",
-    "lib": [
-      "es6"
-    ],
+    "lib": ["es6"],
     "module": "commonjs",
     "rootDir": "src",
     "resolveJsonModule": true,
@@ -17,5 +16,7 @@
     "paths": {
       "@/*": ["./src/*"]
     }
-  }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
 }

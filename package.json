@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon -w src -e ts --exec \"ts-node  -r tsconfig-paths/register ./src/infrastructure/api/runServer\"",
     "test": "jest",
-    "build": "tsc ."
+    "test:coverage": "jest --coverage",
+    "build": "tsc && tsc-alias"
   },
   "keywords": [],
   "author": "",
@@ -26,6 +27,7 @@
     "prettier": "^2.8.8",
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",
+    "tsc-alias": "^1.8.6",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.1.3"
   },
