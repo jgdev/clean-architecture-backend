@@ -5,5 +5,6 @@ export default class ValidatorError extends BaseError {
     super(params);
     this.name = "ValidatorError";
     this.type = ErrorType.Validation;
+    this.data = { displayError: true };
   }
 }

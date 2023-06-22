@@ -5,5 +5,6 @@ export default class NotFoundError extends BaseError {
     super(params);
     this.name = "NotFound";
     this.type = ErrorType.Custom;
+    this.data = { displayError: true };
   }
 }

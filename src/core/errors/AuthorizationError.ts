@@ -5,5 +5,6 @@ export default class AuthorizationError extends BaseError {
     super(params);
     this.name = "AuthorizationError";
     this.type = ErrorType.Authorization;
+    this.data = { displayError: true };
   }
 }

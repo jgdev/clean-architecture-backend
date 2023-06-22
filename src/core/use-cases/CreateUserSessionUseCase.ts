@@ -37,7 +37,9 @@ export default class CreateUserSessionUseCase {
       status: UserStatus.ACTIVE,
     });
     let invalidCredentials = !user;
-    if (user) invalidCredentials = !(await user.validateUser(params.password));
+    if (user) {
+      invalidCredentials = !(await user.validateUser(params.password));
+    }
     if (invalidCredentials) {
       throw new AuthorizationError("Invalid user credentials");
     }

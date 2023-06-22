@@ -1,9 +1,9 @@
 import { randomUUID } from "crypto";
-import bcrypt, { hash } from "bcrypt";
+import bcrypt from "bcrypt";
 
 export enum UserStatus {
-  ACTIVE,
-  INACTIVE,
+  ACTIVE = "active",
+  INACTIVE = "inactive",
 }
 
 export default class User {
@@ -15,12 +15,10 @@ export default class User {
 
   constructor(
     user: Omit<User, "id" | "setPassword" | "validateUser" | "password">,
-    id?: string,
-    password?: string
+    id?: string
   ) {
     Object.assign(this, user);
     this.id = id || randomUUID();
-    if (password) this.password = password;
   }
 
   static async getHash(password: string): Promise<string> {
@@ -37,9 +35,8 @@ export default class User {
   }
 
   async validateUser(password: string): Promise<boolean> {
-    const hash = await User.getHash(password);
     return new Promise((resolve, reject) => {
-      bcrypt.compare(this.password, hash).then(resolve).catch(reject);
+      bcrypt.compare(password, this.password).then(resolve).catch(reject);
     });
   }
 }

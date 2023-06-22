@@ -39,7 +39,7 @@ describe("UseCase - CreateUserSession", () => {
       .mockImplementation(() => Promise.resolve(expectedResult));
     const sessionId = await createUserSessionUseCase.execute({
       email: fakeUser.email,
-      password: fakeUser.password,
+      password: fakePassword,
     });
     expect(sessionId).toBe(expectedResult);
   });
