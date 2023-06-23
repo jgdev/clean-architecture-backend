@@ -1,8 +1,8 @@
-export type SearchParams<T> = Partial<T> | string;
-export type OrderBy = "asc" | "desc";
+export type SearchParams<T> = Partial<T>;
+export type SortBy = "asc" | "desc";
 export type OrderParams<T> = {
-  sortBy: keyof T;
-  orderBy: OrderBy;
+  sortBy?: SortBy;
+  orderBy?: keyof T;
 };
 
 export const DEFAULT_ROWS_LIMIT = 30;

@@ -15,10 +15,12 @@ export default class User {
 
   constructor(
     user: Omit<User, "id" | "setPassword" | "validateUser" | "password">,
-    id?: string
+    id?: string,
+    password?: string
   ) {
     Object.assign(this, user);
     this.id = id || randomUUID();
+    if (password) this.password = password;
   }
 
   static async getHash(password: string): Promise<string> {

@@ -1,13 +1,13 @@
-import Operation, { OperationType } from "@/core/entities/Operation";
-import Record from "@/core/entities/Record";
+import Operation, { OperationType } from '@/core/entities/Operation';
+import Record from '@/core/entities/Record';
 import {
   SearchParams,
   PaginatedParams,
   PaginatedResult,
-  DEFAULT_ROWS_LIMIT,
-} from "@/core/repository";
-import IEntityRepository from "@/core/repository/EntityRepository";
-import IRecordEntityRepository from "@/core/repository/RecordRepository";
+  DEFAULT_ROWS_LIMIT
+} from '@/core/repository';
+import IEntityRepository from '@/core/repository/EntityRepository';
+import IRecordEntityRepository from '@/core/repository/RecordRepository';
 
 export type ITestEntityRepository<T> = IEntityRepository<T> & {
   records: T[];
@@ -18,8 +18,8 @@ export const createInMemoryRepository = <T>(
 ): ITestEntityRepository<T> => {
   let records: T[] = initialData;
 
-  const findByParams = (params: SearchParams<T>) => (record: any) => {
-    return Object.keys(params).reduce((result, key: any) => {
+  const findByParams = (params?: SearchParams<T>) => (record: any) => {
+    return Object.keys(params || {}).reduce((result, key: any) => {
       return result && record[key] === (params as any)[key];
     }, true);
   };
@@ -34,19 +34,19 @@ export const createInMemoryRepository = <T>(
   };
 
   const findAll = async (
-    searchParams: SearchParams<T>,
+    searchParams?: SearchParams<T>,
     paginatedParams?: PaginatedParams<T>
   ) => {
     const skip = paginatedParams?.skip || 0;
     const limit = paginatedParams?.limit || DEFAULT_ROWS_LIMIT;
     let data = records.filter(findByParams(searchParams));
-    if (paginatedParams?.sortBy) {
-      const sortBy = paginatedParams.sortBy;
+    if (paginatedParams?.orderBy) {
+      const orderBy = paginatedParams.orderBy;
       data = data.sort((a: any, b: any) => {
-        if (a[sortBy] > b[sortBy]) {
-          return paginatedParams.orderBy === "asc" ? 1 : -1;
+        if (a[orderBy] > b[orderBy]) {
+          return paginatedParams.sortBy === 'asc' ? 1 : -1;
         } else {
-          return paginatedParams.orderBy === "asc" ? -1 : 1;
+          return paginatedParams.sortBy === 'asc' ? -1 : 1;
         }
       });
     }
@@ -56,7 +56,7 @@ export const createInMemoryRepository = <T>(
       total: data.length,
       limit,
       result,
-      skip,
+      skip
     } as PaginatedResult<T>;
   };
 
@@ -65,7 +65,7 @@ export const createInMemoryRepository = <T>(
     if (recordIndex > -1) {
       records[recordIndex] = {
         ...records[recordIndex],
-        ...toUpdate,
+        ...toUpdate
       };
     }
     return records[recordIndex];
@@ -83,7 +83,7 @@ export const createInMemoryRepository = <T>(
     findOne,
     findAll,
     remove,
-    update,
+    update
   };
 
   return { ...repository, records };
@@ -108,14 +108,14 @@ export const createInMemoryRecordEntityRepository = (
     return entityRepository.findAll(
       {
         ...((searchParams as any) || {}),
-        operationId: operation?.id,
+        operationId: operation?.id
       },
       paginatedParams
     );
   };
   return {
     ...entityRepository,
-    findAllByOperationType,
+    findAllByOperationType
   } as IRecordEntityRepository;
 };
 

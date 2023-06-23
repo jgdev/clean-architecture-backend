@@ -1,17 +1,17 @@
-import Record from "@/core/entities/Record";
-import User, { UserStatus } from "@/core/entities/User";
-import Operation, { OperationType } from "@/core/entities/Operation";
-import IEntityRepository from "@/core/repository/EntityRepository";
+import Record from '@/core/entities/Record';
+import User, { UserStatus } from '@/core/entities/User';
+import Operation, { OperationType } from '@/core/entities/Operation';
+import IEntityRepository from '@/core/repository/EntityRepository';
 
 import createInMemoryRepository, {
   ITestEntityRepository,
-  createInMemoryRecordEntityRepository,
-} from "../utils/InMemoryRepository";
-import IRecordEntityRepository from "@/core/repository/RecordRepository";
-import { randomUUID } from "crypto";
-import RemoveRecordUseCase from "@/core/use-cases/RemoveRecordUseCase";
+  createInMemoryRecordEntityRepository
+} from '../utils/InMemoryRepository';
+import IRecordEntityRepository from '@/core/repository/RecordRepository';
+import { randomUUID } from 'crypto';
+import RemoveRecordUseCase from '@/core/use-cases/RemoveRecordUseCase';
 
-describe("UseCase - List Records", () => {
+describe('UseCase - List Records', () => {
   let fakeRecords: Record[];
   let fakeUser: User;
 
@@ -27,39 +27,39 @@ describe("UseCase - List Records", () => {
   beforeEach(() => {
     fakeUser = new User({
       balance: 200,
-      email: "test@test",
-      status: UserStatus.ACTIVE,
+      email: 'test@test',
+      status: UserStatus.ACTIVE
     });
     fakeOperationAdd = new Operation({
-      amount: 100,
-      type: OperationType.ADDITION,
+      cost: 100,
+      type: OperationType.ADDITION
     });
     fakeRecords = [
       new Record({
-        amount: 100,
+        cost: 100,
         newUserBalance: 100,
         oldUserBalance: 200,
         operationArgs: [],
         operationId: fakeOperationAdd.id,
         operationResult: 0,
-        timestamp: Date.now(),
-        userId: fakeUser.id,
+        timestamp: new Date(),
+        userId: fakeUser.id
       }),
       new Record({
-        amount: 100,
+        cost: 100,
         newUserBalance: 100,
         oldUserBalance: 200,
         operationArgs: [],
         operationId: fakeOperationAdd.id,
         operationResult: 0,
-        timestamp: Date.now(),
-        userId: randomUUID(),
-      }),
+        timestamp: new Date(),
+        userId: randomUUID()
+      })
     ];
     usersRepository = createInMemoryRepository<User>([fakeUser]);
     operaitonsRepository = createInMemoryRepository<Operation>([
       fakeOperationAdd,
-      fakeOperationMultiply,
+      fakeOperationMultiply
     ]);
     recordsRepository = createInMemoryRecordEntityRepository(
       operaitonsRepository,
@@ -67,39 +67,39 @@ describe("UseCase - List Records", () => {
     );
     removeRecordUseCase = new RemoveRecordUseCase({
       recordsRepository,
-      usersRepository,
+      usersRepository
     });
   });
 
-  it("should remove a records by userId", async () => {
+  it('should remove a records by userId', async () => {
     const testRepository =
       recordsRepository as any as ITestEntityRepository<Record>;
     expect(testRepository.records.length).toBe(2);
     await removeRecordUseCase.execute({
       recordId: fakeRecords[0].id,
-      userId: fakeUser.id,
+      userId: fakeUser.id
     });
     expect(testRepository.records.length).toBe(1);
   });
 
-  it("should return if tries to remove a record of another user", async () => {
+  it('should return if tries to remove a record of another user', async () => {
     expect.assertions(1);
     try {
       await removeRecordUseCase.execute({
         recordId: fakeRecords[1].id,
-        userId: fakeUser.id,
+        userId: fakeUser.id
       });
     } catch (err: any) {
       expect(err.message).toMatch(/Record not found/);
     }
   });
 
-  it("should validate parameters", async () => {
+  it('should validate parameters', async () => {
     expect.assertions(4);
     try {
       await removeRecordUseCase.execute({
         recordId: fakeRecords[0].id,
-        userId: "",
+        userId: ''
       });
     } catch (err: any) {
       expect(err.message).toMatch(/Invalid parameter userId/);
@@ -107,7 +107,7 @@ describe("UseCase - List Records", () => {
     try {
       await removeRecordUseCase.execute({
         recordId: fakeRecords[0].id,
-        userId: randomUUID(),
+        userId: randomUUID()
       });
     } catch (err: any) {
       expect(err.message).toMatch(/User not found/);
@@ -115,7 +115,7 @@ describe("UseCase - List Records", () => {
     try {
       await removeRecordUseCase.execute({
         recordId: randomUUID(),
-        userId: fakeUser.id,
+        userId: fakeUser.id
       });
     } catch (err: any) {
       expect(err.message).toMatch(/Record not found/);
@@ -123,7 +123,7 @@ describe("UseCase - List Records", () => {
     try {
       await removeRecordUseCase.execute({
         userId: fakeUser.id,
-        recordId: "",
+        recordId: ''
       });
     } catch (err: any) {
       expect(err.message).toMatch(/Invalid parameter recordId/);

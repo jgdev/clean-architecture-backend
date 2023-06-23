@@ -12,3 +12,5 @@ export const createLogger = (name: string) => ({
 
 export const httpLogger = createLogger("http");
 export const bootstrapLogger = createLogger("bootstrap");
+export const dbLogger = createLogger("db");
+export const redisCacheLogger = createLogger("redis");

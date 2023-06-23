@@ -9,7 +9,7 @@ const logRes = (log: any) => {
   httpLogger.custom("info:http:res")(log);
 };
 const logJSON = (json: any) => {
-  httpLogger.custom("info:http:json")(json);
+  httpLogger.custom("debug:http:json")(json);
 };
 
 export const isReadableContent = (body: any) => {

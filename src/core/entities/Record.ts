@@ -1,17 +1,17 @@
-import { randomUUID } from "crypto";
+import { randomUUID } from 'crypto';
 
 export default class Record {
   readonly id: string;
-  amount!: number;
+  cost!: number;
   operationId!: string;
   userId!: string;
   oldUserBalance!: number;
   newUserBalance!: number;
-  operationArgs!: object;
+  operationArgs!: any;
   operationResult!: any;
-  timestamp!: number;
+  timestamp!: Date;
 
-  constructor(record: Omit<Record, "id">, id?: string) {
+  constructor(record: Omit<Record, 'id'>, id?: string) {
     Object.assign(this, record);
     this.id = id || randomUUID();
   }

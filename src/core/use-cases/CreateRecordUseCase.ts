@@ -1,10 +1,10 @@
-import User from "@/core/entities/User";
-import Record from "@/core/entities/Record";
-import Operation from "@/core/entities/Operation";
-import IEntityRepository from "@/core/repository/EntityRepository";
-import OperationServiceFactory from "@/lib/services/operations/OperationServiceFactory";
-import NotFoundError from "@/core/errors/NotFoundError";
-import ValidatorError from "../errors/ValidationError";
+import User from '@/core/entities/User';
+import Record from '@/core/entities/Record';
+import Operation from '@/core/entities/Operation';
+import IEntityRepository from '@/core/repository/EntityRepository';
+import OperationServiceFactory from '@/lib/services/operations/OperationServiceFactory';
+import NotFoundError from '@/core/errors/NotFoundError';
+import ValidatorError from '../errors/ValidationError';
 
 export type CreateRecordDTO = {
   userId: string;
@@ -30,36 +30,36 @@ export default class CreateRecordUseCase {
 
   async execute(params: CreateRecordDTO): Promise<CreateRecordResultDTO> {
     if (!params.operationId)
-      throw new ValidatorError("Invalid parameter operationId");
+      throw new ValidatorError('Invalid parameter operationId');
     const operation = await this.operationsRepository.findOne({
-      id: params.operationId,
+      id: params.operationId
     });
-    if (!operation) throw new NotFoundError("Operation not found");
+    if (!operation) throw new NotFoundError('Operation not found');
 
-    if (!params.userId) throw new ValidatorError("Invalid parameter userId");
+    if (!params.userId) throw new ValidatorError('Invalid parameter userId');
     const user = await this.usersRepository.findOne({ id: params.userId });
-    if (!user) throw new NotFoundError("User not found");
+    if (!user) throw new NotFoundError('User not found');
 
     const operationResult = await OperationServiceFactory.getOperationByType(
       operation!.type
     ).perform(params.operationArgs);
 
-    const newUserBalance = user.balance - operation.amount;
+    const newUserBalance = user.balance - operation.cost;
 
     if (newUserBalance < 0)
       throw new ValidatorError(
-        "The user does not have enought balance to perform this operation"
+        'The user does not have enought balance to perform this operation'
       );
 
     const record = new Record({
       userId: user.id,
       operationId: operation.id,
-      amount: operation.amount,
-      timestamp: Date.now(),
+      cost: operation.cost,
+      timestamp: new Date(),
       operationArgs: params.operationArgs,
       operationResult,
       oldUserBalance: user.balance,
-      newUserBalance: newUserBalance,
+      newUserBalance: newUserBalance
     });
 
     const result = await this.recordsRepository.create(record);

@@ -3,7 +3,7 @@ import { PaginatedParams, PaginatedResult, SearchParams } from ".";
 export default interface IEntityRepository<T> {
   findOne: (params: SearchParams<T>) => Promise<T | undefined>;
   findAll: (
-    searchParams: SearchParams<T>,
+    searchParams?: SearchParams<T>,
     paginatedParams?: PaginatedParams<T>
   ) => Promise<PaginatedResult<T>>;
   create: (params: Partial<T>) => Promise<T>;
