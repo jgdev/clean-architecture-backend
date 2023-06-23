@@ -1,16 +1,16 @@
-import { randomUUID } from 'crypto';
+import { randomUUID } from "crypto";
 
-import Record from '@/core/entities/Record';
-import CreateRecordUseCase from '@/core/use-cases/CreateRecordUseCase';
-import User, { UserStatus } from '@/core/entities/User';
-import Operation, { OperationType } from '@/core/entities/Operation';
-import IEntityRepository from '@/core/repository/EntityRepository';
-import OperationServiceFactory from '@/lib/services/operations/OperationServiceFactory';
-import OperationImpl from '@/lib/services/operations/OperationImpl';
+import Record from "@/core/entities/Record";
+import CreateRecordUseCase from "@/core/use-cases/CreateRecordUseCase";
+import User, { UserStatus } from "@/core/entities/User";
+import Operation, { OperationType } from "@/core/entities/Operation";
+import IEntityRepository from "@/core/repository/EntityRepository";
+import OperationServiceFactory from "@/lib/services/OperationServiceFactory";
+import OperationImpl from "@/lib/services/operations/OperationImpl";
 
-import createInMemoryRepository from '../utils/InMemoryRepository';
+import createInMemoryRepository from "../utils/InMemoryRepository";
 
-describe('UseCase - Create Record', () => {
+describe("UseCase - Create Record", () => {
   let fakeUser: User;
   let fakeOperation: Operation;
 
@@ -23,13 +23,13 @@ describe('UseCase - Create Record', () => {
   beforeEach(() => {
     fakeUser = new User({
       balance: 200,
-      email: 'test@test',
-      status: UserStatus.ACTIVE
+      email: "test@test",
+      status: UserStatus.ACTIVE,
     });
 
     fakeOperation = new Operation({
       cost: 10.5,
-      type: OperationType.ADDITION
+      type: OperationType.ADDITION,
     });
 
     recordsRepository = createInMemoryRepository<Record>();
@@ -39,11 +39,11 @@ describe('UseCase - Create Record', () => {
     createRecordUseCase = new CreateRecordUseCase({
       recordsRepository,
       usersRepository,
-      operationsRepository
+      operationsRepository,
     });
   });
 
-  test('should create an operation record properly', async () => {
+  test("should create an operation record properly", async () => {
     const expectedFakeOperationResult = 3;
     OperationServiceFactory.getOperationByType = jest.fn(
       () =>
@@ -56,7 +56,7 @@ describe('UseCase - Create Record', () => {
     const record = await createRecordUseCase.execute({
       userId: fakeUser.id,
       operationId: fakeOperation.id,
-      operationArgs: [1, 2]
+      operationArgs: [1, 2],
     });
     const user = await usersRepository.findOne({ email: fakeUser.email });
     expect(user?.balance).toBe(189.5);
@@ -67,9 +67,9 @@ describe('UseCase - Create Record', () => {
       cost: fakeOperation.cost,
       operationArgs: [1, 2],
       operationResult: expectedFakeOperationResult,
-      timestamp: expect.any(Date),
+      date: expect.any(Date),
       oldUserBalance: 200,
-      newUserBalance: 189.5
+      newUserBalance: 189.5,
     });
   });
 
@@ -83,7 +83,7 @@ describe('UseCase - Create Record', () => {
       await createRecordUseCase.execute({
         userId: fakeUser.id,
         operationId: fakeOperation.id,
-        operationArgs: [1, 2]
+        operationArgs: [1, 2],
       });
     } catch (err: any) {
       expect(err.message).toMatch(
@@ -92,19 +92,19 @@ describe('UseCase - Create Record', () => {
     }
   });
 
-  test('should validate parameters', async () => {
+  test("should validate parameters", async () => {
     expect.assertions(4);
     createRecordUseCase = new CreateRecordUseCase({
       recordsRepository,
       usersRepository,
-      operationsRepository
+      operationsRepository,
     });
 
     try {
       await createRecordUseCase.execute({
         userId: randomUUID(),
         operationId: fakeOperation.id,
-        operationArgs: [1, 2]
+        operationArgs: [1, 2],
       });
     } catch (err: any) {
       expect(err.message).toMatch(/User not found/);
@@ -112,9 +112,9 @@ describe('UseCase - Create Record', () => {
 
     try {
       await createRecordUseCase.execute({
-        userId: '',
+        userId: "",
         operationId: fakeOperation.id,
-        operationArgs: [1, 2]
+        operationArgs: [1, 2],
       });
     } catch (err: any) {
       expect(err.message).toMatch(/Invalid parameter userId/);
@@ -123,8 +123,8 @@ describe('UseCase - Create Record', () => {
     try {
       await createRecordUseCase.execute({
         userId: fakeUser.id,
-        operationId: '',
-        operationArgs: [1, 2]
+        operationId: "",
+        operationArgs: [1, 2],
       });
     } catch (err: any) {
       expect(err.message).toMatch(/Invalid parameter operationId/);
@@ -134,7 +134,7 @@ describe('UseCase - Create Record', () => {
       await createRecordUseCase.execute({
         userId: fakeUser.id,
         operationId: randomUUID(),
-        operationArgs: [1, 2]
+        operationArgs: [1, 2],
       });
     } catch (err: any) {
       expect(err.message).toMatch(/Operation not found/);

@@ -1,16 +1,16 @@
-import Record from '@/core/entities/Record';
-import User, { UserStatus } from '@/core/entities/User';
-import Operation, { OperationType } from '@/core/entities/Operation';
-import IEntityRepository from '@/core/repository/EntityRepository';
-import ListRecordsUseCase from '@/core/use-cases/ListRecordsUseCase';
+import Record from "@/core/entities/Record";
+import User, { UserStatus } from "@/core/entities/User";
+import Operation, { OperationType } from "@/core/entities/Operation";
+import IEntityRepository from "@/core/repository/EntityRepository";
+import ListRecordsUseCase from "@/core/use-cases/ListRecordsUseCase";
 
 import createInMemoryRepository, {
-  createInMemoryRecordEntityRepository
-} from '../utils/InMemoryRepository';
-import IRecordEntityRepository from '@/core/repository/RecordRepository';
-import { randomUUID } from 'crypto';
+  createInMemoryRecordEntityRepository,
+} from "../utils/InMemoryRepository";
+import IRecordEntityRepository from "@/core/repository/RecordRepository";
+import { randomUUID } from "crypto";
 
-describe('UseCase - List Records', () => {
+describe("UseCase - List Records", () => {
   let fakeRecords: Record[];
   let fakeUser: User;
   let fakeUser2: User;
@@ -27,21 +27,21 @@ describe('UseCase - List Records', () => {
   beforeEach(() => {
     fakeUser = new User({
       balance: 200,
-      email: 'test@test',
-      status: UserStatus.ACTIVE
+      email: "test@test",
+      status: UserStatus.ACTIVE,
     });
     fakeUser2 = new User({
       balance: 100,
-      email: 'test2@test2',
-      status: UserStatus.ACTIVE
+      email: "test2@test2",
+      status: UserStatus.ACTIVE,
     });
     fakeOperationAdd = new Operation({
       cost: 100,
-      type: OperationType.ADDITION
+      type: OperationType.ADDITION,
     });
     fakeOperationMultiply = new Operation({
       cost: 100,
-      type: OperationType.MULTIPLICATION
+      type: OperationType.MULTIPLICATION,
     });
     fakeRecords = [
       new Record({
@@ -51,8 +51,8 @@ describe('UseCase - List Records', () => {
         operationArgs: [],
         operationId: fakeOperationAdd.id,
         operationResult: 0,
-        timestamp: new Date(),
-        userId: fakeUser2.id
+        date: new Date(),
+        userId: fakeUser2.id,
       }),
       new Record({
         cost: 100,
@@ -61,8 +61,8 @@ describe('UseCase - List Records', () => {
         operationArgs: [],
         operationId: fakeOperationAdd.id,
         operationResult: 0,
-        timestamp: new Date(),
-        userId: fakeUser.id
+        date: new Date(),
+        userId: fakeUser.id,
       }),
       new Record({
         cost: 30,
@@ -71,14 +71,14 @@ describe('UseCase - List Records', () => {
         operationArgs: [],
         operationId: fakeOperationMultiply.id,
         operationResult: 0,
-        timestamp: new Date(Date.now() + 300),
-        userId: fakeUser2.id
-      })
+        date: new Date(Date.now() + 300),
+        userId: fakeUser2.id,
+      }),
     ];
     usersRepository = createInMemoryRepository<User>([fakeUser, fakeUser2]);
     operaitonsRepository = createInMemoryRepository<Operation>([
       fakeOperationAdd,
-      fakeOperationMultiply
+      fakeOperationMultiply,
     ]);
     recordsRepository = createInMemoryRecordEntityRepository(
       operaitonsRepository,
@@ -86,74 +86,74 @@ describe('UseCase - List Records', () => {
     );
     listRecordsUseCase = new ListRecordsUseCase({
       recordsRepository,
-      usersRepository
+      usersRepository,
     });
   });
 
-  it('should retrieve all records by userId', async () => {
+  it("should retrieve all records by userId", async () => {
     const result = await listRecordsUseCase.execute({
-      userId: fakeUser2.id
+      userId: fakeUser2.id,
     });
     expect(result).toMatchObject({
       total: 2,
       limit: expect.any(Number),
-      skip: expect.any(Number)
+      skip: expect.any(Number),
     });
   });
 
-  it('should retrieve all records filtered by operation type', async () => {
+  it("should retrieve all records filtered by operation type", async () => {
     const result = await listRecordsUseCase.execute({
       userId: fakeUser2.id,
-      operationType: OperationType.ADDITION
+      operationType: OperationType.ADDITION,
     });
 
     expect(result).toMatchObject({
       result: [fakeRecords[0]],
       total: 1,
       limit: expect.any(Number),
-      skip: expect.any(Number)
+      skip: expect.any(Number),
     });
   });
 
-  it('should retrieve all records sorted by timestamp field', async () => {
+  it("should retrieve all records sorted by date field", async () => {
     const result = await listRecordsUseCase.execute(
       {
-        userId: fakeUser2.id
+        userId: fakeUser2.id,
       },
-      { orderBy: 'timestamp' }
+      { orderBy: "date" }
     );
     expect(result).toMatchObject({
       result: [fakeRecords[2], fakeRecords[0]],
       total: 2,
       limit: expect.any(Number),
-      skip: expect.any(Number)
+      skip: expect.any(Number),
     });
     const result2 = await listRecordsUseCase.execute(
       {
-        userId: fakeUser2.id
+        userId: fakeUser2.id,
       },
-      { orderBy: 'timestamp', sortBy: 'asc' }
+      { orderBy: "date", sortBy: "asc" }
     );
     expect(result2).toMatchObject({
       result: [fakeRecords[0], fakeRecords[2]],
       total: 2,
       limit: expect.any(Number),
-      skip: expect.any(Number)
+      skip: expect.any(Number),
     });
   });
 
-  it('should validate parameters', async () => {
+  it("should validate parameters", async () => {
     expect.assertions(2);
     try {
       await listRecordsUseCase.execute({
-        userId: ''
+        userId: "",
       });
     } catch (err: any) {
       expect(err.message).toMatch(/"userId" field is required/);
     }
     try {
       await listRecordsUseCase.execute({
-        userId: randomUUID()
+        userId: randomUUID(),
       });
     } catch (err: any) {
       expect(err.message).toMatch(/User not found/);

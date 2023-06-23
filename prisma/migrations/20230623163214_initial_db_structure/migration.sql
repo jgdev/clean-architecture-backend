@@ -4,7 +4,7 @@ CREATE TABLE "User" (
     "password" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "status" TEXT NOT NULL,
-    "balance" DECIMAL(65,30) NOT NULL DEFAULT 0,
+    "balance" DECIMAL(10,2) NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -13,7 +13,7 @@ CREATE TABLE "User" (
 CREATE TABLE "Operation" (
     "id" TEXT NOT NULL,
     "type" TEXT NOT NULL,
-    "cost" DECIMAL(65,30) NOT NULL DEFAULT 0,
+    "cost" DECIMAL(10,2) NOT NULL DEFAULT 0,
 
     CONSTRAINT "Operation_pkey" PRIMARY KEY ("id")
 );
@@ -23,15 +23,18 @@ CREATE TABLE "Record" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "operationId" TEXT NOT NULL,
-    "cost" DECIMAL(65,30) NOT NULL DEFAULT 0,
-    "oldUserBalance" DECIMAL(65,30) NOT NULL DEFAULT 0,
-    "newUserBalance" DECIMAL(65,30) NOT NULL DEFAULT 0,
-    "operationArgs" JSONB,
+    "cost" DECIMAL(10,2) NOT NULL DEFAULT 0,
+    "oldUserBalance" DECIMAL(10,2) NOT NULL DEFAULT 0,
+    "newUserBalance" DECIMAL(10,2) NOT NULL DEFAULT 0,
+    "operationArgs" JSONB NOT NULL,
     "operationResult" JSONB NOT NULL,
-    "timestamp" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Record_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Operation_type_key" ON "Operation"("type");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Record_id_key" ON "Record"("id");

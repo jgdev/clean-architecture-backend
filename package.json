@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon -w src -e ts --exec \"ts-node  -r tsconfig-paths/register ./src/infrastructure/api/runServer\"",
-    "test": "jest",
-    "test:coverage": "jest --coverage",
+    "dev:mock": "nodemon -w src -e ts --exec \"ts-node  -r tsconfig-paths/register ./src/infrastructure/api/runServerMock\"",
+    "test": "jest --coverage",
     "build": "tsc && tsc-alias",
     "migration:check": "prisma migrate dev",
     "migration:apply": "prisma migrate production",
@@ -45,6 +45,7 @@
     "http-status": "^1.6.2",
     "koa": "^2.14.2",
     "koa-bodyparser": "^4.4.0",
-    "koa-router": "^12.0.0"
+    "koa-router": "^12.0.0",
+    "redis": "^4.6.7"
   }
 }

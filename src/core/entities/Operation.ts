@@ -7,6 +7,7 @@ export enum OperationType {
   DIVISION = "division",
   SQUARE_ROOT = "square_root",
   RANDOM_STRING = "random_string",
+  RANDOM_STRING_V2 = "random_string_v2",
 }
 
 export default class Operation {

@@ -1,11 +1,12 @@
 import { OperationType } from "@/core/entities/Operation";
-import OperationImpl from "./OperationImpl";
-import OperationAdditionImpl from "./OperationAdditionImpl";
-import OperationDivisionImpl from "./OperationDivisionImpl";
-import OperationMultiplyImpl from "./OperationMultiplyImpl";
-import OperationRandomStringGeneratorImpl from "./OperationRandomStringGeneratorImpl";
-import OperationSquareRootImpl from "./OperationSquareRootImpl";
-import OperationSubstractImpl from "./OperationSubstractImpl";
+import OperationImpl from "./operations/OperationImpl";
+import OperationAdditionImpl from "./operations/OperationAdditionImpl";
+import OperationDivisionImpl from "./operations/OperationDivisionImpl";
+import OperationMultiplyImpl from "./operations/OperationMultiplyImpl";
+import OperationRandomStringGeneratorImpl from "./operations/OperationRandomStringGeneratorImpl";
+import OperationSquareRootImpl from "./operations/OperationSquareRootImpl";
+import OperationSubstractImpl from "./operations/OperationSubstractImpl";
+import RandomORGOperationRandomString from "./operations/RandomORGOperationRandomStringImpl";
 
 export default class OperationServiceFactory {
   static getOperationByType(
@@ -20,6 +21,8 @@ export default class OperationServiceFactory {
         return new OperationMultiplyImpl();
       case OperationType.RANDOM_STRING:
         return new OperationRandomStringGeneratorImpl();
+      case OperationType.RANDOM_STRING_V2:
+        return new RandomORGOperationRandomString();
       case OperationType.SQUARE_ROOT:
         return new OperationSquareRootImpl();
       case OperationType.SUBSTRACTION:

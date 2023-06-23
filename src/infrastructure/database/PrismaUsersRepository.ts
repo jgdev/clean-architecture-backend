@@ -1,20 +1,20 @@
-import { PrismaClient, User as PrismaUser, Prisma } from '@prisma/client';
-import User, { UserStatus } from '@/core/entities/User';
+import { PrismaClient, User as PrismaUser, Prisma } from "@prisma/client";
+import User, { UserStatus } from "@/core/entities/User";
 import {
   SearchParams,
   PaginatedParams,
   PaginatedResult,
-  DEFAULT_ROWS_LIMIT
-} from '@/core/repository';
+  DEFAULT_ROWS_LIMIT,
+} from "@/core/repository";
 
-import IEntityRepository from '@/core/repository/EntityRepository';
+import IEntityRepository from "@/core/repository/EntityRepository";
 
 export const modelToDbObject = (user: User): PrismaUser => ({
   id: user.id,
   email: user.email,
   balance: new Prisma.Decimal(user.balance),
-  password: user.password || '',
-  status: user.status
+  password: user.password || "",
+  status: user.status,
 });
 
 export const dbObjectToModel = (dbObject: PrismaUser): User =>
@@ -22,13 +22,13 @@ export const dbObjectToModel = (dbObject: PrismaUser): User =>
     {
       email: dbObject.email,
       balance: dbObject.balance.toNumber(),
-      status: dbObject.status as UserStatus
+      status: dbObject.status as UserStatus,
     },
     dbObject.id,
     dbObject.password
   );
 
-export default class DBUsersRepository implements IEntityRepository<User> {
+export default class PrismaUsersRepository implements IEntityRepository<User> {
   private client: PrismaClient;
 
   constructor(client: PrismaClient) {
@@ -37,7 +37,7 @@ export default class DBUsersRepository implements IEntityRepository<User> {
 
   async create(params: Partial<User>): Promise<User> {
     const data = await this.client.user.create({
-      data: modelToDbObject(params as User)
+      data: modelToDbObject(params as User),
     });
     return dbObjectToModel(data);
   }
@@ -48,16 +48,16 @@ export default class DBUsersRepository implements IEntityRepository<User> {
   ): Promise<PaginatedResult<User>> {
     const results = await this.client.$transaction([
       this.client.user.count({
-        where: searchParams
+        where: searchParams,
       }),
       this.client.user.findMany({
         where: searchParams,
         skip: paginatedParams?.skip,
         take: paginatedParams?.limit,
         orderBy: paginatedParams?.orderBy && {
-          [paginatedParams?.orderBy]: paginatedParams?.sortBy || 'desc'
-        }
-      })
+          [paginatedParams?.orderBy]: paginatedParams?.sortBy || "desc",
+        },
+      }),
     ]);
 
     return {
@@ -66,20 +66,20 @@ export default class DBUsersRepository implements IEntityRepository<User> {
       skip: paginatedParams?.skip || 0,
       limit: paginatedParams?.limit || DEFAULT_ROWS_LIMIT,
       orderBy: paginatedParams?.orderBy,
-      sortBy: paginatedParams?.sortBy
+      sortBy: paginatedParams?.sortBy,
     };
   }
 
   async findOne(params: SearchParams<User>): Promise<User | undefined> {
     const result = await this.client.user.findFirst({
-      where: params
+      where: params,
     });
     return (result && dbObjectToModel(result)) || undefined;
   }
 
   async remove(params: SearchParams<User>): Promise<void> {
     await this.client.user.delete({
-      where: params
+      where: params,
     });
   }
 
@@ -89,7 +89,7 @@ export default class DBUsersRepository implements IEntityRepository<User> {
   ): Promise<User> {
     const result = await this.client.user.update({
       where: params,
-      data: updateParams
+      data: updateParams,
     });
     return dbObjectToModel(result);
   }

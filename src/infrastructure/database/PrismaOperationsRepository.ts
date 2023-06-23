@@ -1,34 +1,34 @@
 import {
   PrismaClient,
   Operation as PrismaOperation,
-  Prisma
-} from '@prisma/client';
-import Operation, { OperationType } from '@/core/entities/Operation';
+  Prisma,
+} from "@prisma/client";
+import Operation, { OperationType } from "@/core/entities/Operation";
 import {
   SearchParams,
   PaginatedParams,
   PaginatedResult,
-  DEFAULT_ROWS_LIMIT
-} from '@/core/repository';
+  DEFAULT_ROWS_LIMIT,
+} from "@/core/repository";
 
-import IEntityRepository from '@/core/repository/EntityRepository';
+import IEntityRepository from "@/core/repository/EntityRepository";
 
 export const modelToDbObject = (operation: Operation): PrismaOperation => ({
   cost: new Prisma.Decimal(operation.cost),
   id: operation.id,
-  type: operation.type
+  type: operation.type,
 });
 
 export const dbObjectToModel = (dbObject: PrismaOperation): Operation =>
   new Operation(
     {
       cost: dbObject.cost.toNumber(),
-      type: dbObject.type as OperationType
+      type: dbObject.type as OperationType,
     },
     dbObject.id
   );
 
-export default class DBOperationsRepository
+export default class PrismaOperationsRepository
   implements IEntityRepository<Operation>
 {
   private client: PrismaClient;
@@ -39,7 +39,7 @@ export default class DBOperationsRepository
 
   async create(params: Partial<Operation>): Promise<Operation> {
     const data = await this.client.operation.create({
-      data: modelToDbObject(params as Operation)
+      data: modelToDbObject(params as Operation),
     });
     return dbObjectToModel(data);
   }
@@ -50,16 +50,16 @@ export default class DBOperationsRepository
   ): Promise<PaginatedResult<Operation>> {
     const results = await this.client.$transaction([
       this.client.operation.count({
-        where: searchParams
+        where: searchParams,
       }),
       this.client.operation.findMany({
         where: searchParams,
         skip: paginatedParams?.skip,
         take: paginatedParams?.limit,
         orderBy: paginatedParams?.orderBy && {
-          [paginatedParams?.orderBy]: paginatedParams?.sortBy || 'desc'
-        }
-      })
+          [paginatedParams?.orderBy]: paginatedParams?.sortBy || "desc",
+        },
+      }),
     ]);
 
     return {
@@ -68,7 +68,7 @@ export default class DBOperationsRepository
       skip: paginatedParams?.skip || 0,
       limit: paginatedParams?.limit || DEFAULT_ROWS_LIMIT,
       orderBy: paginatedParams?.orderBy,
-      sortBy: paginatedParams?.sortBy
+      sortBy: paginatedParams?.sortBy,
     };
   }
 
@@ -76,14 +76,14 @@ export default class DBOperationsRepository
     params: SearchParams<Operation>
   ): Promise<Operation | undefined> {
     const result = await this.client.operation.findFirst({
-      where: params
+      where: params,
     });
     return (result && dbObjectToModel(result)) || undefined;
   }
 
   async remove(params: SearchParams<Operation>): Promise<void> {
     await this.client.operation.delete({
-      where: params
+      where: params,
     });
   }
 
@@ -93,7 +93,7 @@ export default class DBOperationsRepository
   ): Promise<Operation> {
     const result = await this.client.operation.update({
       where: params,
-      data: updateParams
+      data: updateParams,
     });
     return dbObjectToModel(result);
   }
