@@ -2,27 +2,32 @@ import supertest from "supertest";
 import { Server } from "http";
 import httpStatus from "http-status";
 import KoaRouter from "koa-router";
-import { randomUUID } from "crypto";
+import crypto, { randomUUID } from "crypto";
 
 import User from "@/core/entities/User";
 import ValidatorError from "@/core/errors/ValidationError";
 import AuthorizationError from "@/core/errors/AuthorizationError";
 import { BaseError } from "@/core/errors";
-import CreateUserSessionController from "@/infrastructure/api/controllers/CreateUserSessionController";
-import CreateUserSessionUseCase from "@/core/use-cases/CreateUserSessionUseCase";
-import RemoveUserSessionController from "@/infrastructure/api/controllers/RemoveUserSessionController";
-import RemoveUserSessionUseCase from "@/core/use-cases/RemoveUserSessionUseCase";
 
 import { Api, ApiDeps, createApi } from "@/infrastructure/api";
-import { prepareTestEnvironment } from "../unit/utils/InMemory.bootstrap";
-import CreateRecordController from "@/infrastructure/api/controllers/CreateRecordController";
+import { prepareTestEnvironment } from "@/test/unit/utils/InMemory.bootstrap";
+
 import CreateRecordUseCase from "@/core/use-cases/CreateRecordUseCase";
-import ListRecordsController from "@/infrastructure/api/controllers/ListRecordsController";
 import ListRecordsUseCase from "@/core/use-cases/ListRecordsUseCase";
-import RemoveRecordController from "@/infrastructure/api/controllers/RemoveRecordController";
 import RemoveRecordUseCase from "@/core/use-cases/RemoveRecordUseCase";
+import ListOperationsUseCase from "@/core/use-cases/ListOperationsUseCase";
+import CreateUserSessionUseCase from "@/core/use-cases/CreateUserSessionUseCase";
+import RemoveUserSessionUseCase from "@/core/use-cases/RemoveUserSessionUseCase";
+import GetUserBySessionUseCase from "@/core/use-cases/GetUserBySessionUseCase";
+
+import CreateRecordController from "@/infrastructure/api/controllers/CreateRecordController";
 import ListOperationsController from "@/infrastructure/api/controllers/ListOperationsController";
-import ListOperaitonsUseCase from "@/core/use-cases/ListOperationsUseCase";
+import ListRecordsController from "@/infrastructure/api/controllers/ListRecordsController";
+import RemoveRecordController from "@/infrastructure/api/controllers/RemoveRecordController";
+import RemoveUserSessionController from "@/infrastructure/api/controllers/RemoveUserSessionController";
+import CreateUserSessionController from "@/infrastructure/api/controllers/CreateUserSessionController";
+import GetUserBySessionController from "@/infrastructure/api/controllers/GetUserBySessionController";
+import SessionService from "@/core/services/auth/SessionService";
 
 describe("Api", () => {
   let deps: ApiDeps & { testUser: User };
@@ -335,7 +340,7 @@ describe("Api", () => {
         "handle"
       );
       const useCase = jest
-        .spyOn(ListOperaitonsUseCase.prototype, "execute")
+        .spyOn(ListOperationsUseCase.prototype, "execute")
         .mockImplementation(() => Promise.resolve({} as any));
       request
         .get(`/v1/operations?limit=1&skip=1&orderBy=asc&sortBy=operationType`)
@@ -350,6 +355,25 @@ describe("Api", () => {
           });
           callback();
         });
+    });
+
+    test("[GET] /v1/profile - should instantiate GetUserBySessionController and call GetUserBySessionUseCase", (callback) => {
+      expect.assertions(2);
+      const sessionId = randomUUID();
+      jest.spyOn(crypto, "randomUUID").mockImplementationOnce(() => sessionId);
+      const controller = jest.spyOn(
+        GetUserBySessionController.prototype,
+        "handle"
+      );
+      const useCase = jest
+        .spyOn(GetUserBySessionUseCase.prototype, "execute")
+        .mockImplementation(() => Promise.resolve({} as any));
+      request.get("/v1/profile").end((err) => {
+        if (err) throw err;
+        expect(controller).toHaveBeenCalled();
+        expect(useCase).toHaveBeenCalledWith({ sessionId });
+        callback();
+      });
     });
   });
 });

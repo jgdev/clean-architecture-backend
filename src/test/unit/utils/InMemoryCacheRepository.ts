@@ -8,7 +8,7 @@ export type ITestCacherepository = ICacheRepository & {
   records: TestCacheRecord;
 };
 
-export const createInMemoryCacheRepository =
+const createInMemoryCacheRepository =
   (initialValue?: {}): ITestCacherepository => {
     let records: TestCacheRecord = initialValue || {};
 
@@ -31,3 +31,5 @@ export const createInMemoryCacheRepository =
       records,
     };
   };
+
+export default createInMemoryCacheRepository

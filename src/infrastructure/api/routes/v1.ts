@@ -9,9 +9,17 @@ import ListRecordsController from "../controllers/ListRecordsController";
 import RemoveRecordController from "../controllers/RemoveRecordController";
 import ListOperationsController from "../controllers/ListOperationsController";
 import CreateRecordController from "../controllers/CreateRecordController";
+import GetUserBySessionController from "../controllers/GetUserBySessionController";
 
 export const v1Routers = (app: Api, apiDeps: ApiDeps) => {
   const router = new Router({ prefix: "/v1" });
+
+  // user profile
+
+  router.get("/profile", app.withSession, async (ctx: Context, next: Next) => {
+    ctx.body = await new GetUserBySessionController().handle(apiDeps, ctx);
+    await next();
+  });
 
   // auth routes
 

@@ -7,7 +7,7 @@ import RemoveUserSessionUseCase from "@/core/use-cases/RemoveUserSessionUseCase"
 import SessionService from "@/core/services/auth/SessionService";
 
 import createInMemoryRepository from "../utils/InMemoryRepository";
-import { createInMemoryCacheRepository } from "../utils/InMemoryCacheRepository";
+import createInMemoryCacheRepository from "../utils/InMemoryCacheRepository";
 
 describe("UseCase - CreateUserSession", () => {
   let removeUserSessionUseCase: RemoveUserSessionUseCase;

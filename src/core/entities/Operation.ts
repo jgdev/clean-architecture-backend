@@ -2,7 +2,7 @@ import { randomUUID } from "crypto";
 
 export enum OperationType {
   ADDITION = "addition",
-  SUBSTRACTION = "substraction",
+  SUBTRACTION = "subtraction",
   MULTIPLICATION = "multiplication",
   DIVISION = "division",
   SQUARE_ROOT = "square_root",

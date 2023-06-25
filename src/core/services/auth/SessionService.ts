@@ -64,6 +64,6 @@ export default class SessionService {
     const user = await this.usersRepository.findOne({ id: session.userId });
     if (!user || user.status !== UserStatus.ACTIVE)
       throw new AuthorizationError("Invalid user state");
-    return user;
+    return Object.assign(user, { password: undefined });
   }
 }

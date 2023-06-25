@@ -18,6 +18,19 @@ export type RecordDbObject = Omit<
   operationResult: any;
 };
 
+const fieldsToDisplay = {
+  operation: true,
+  cost: true,
+  date: true,
+  id: true,
+  newUserBalance: true,
+  oldUserBalance: true,
+  operationArgs: true,
+  operationId: true,
+  operationResult: true,
+  userId: true,
+};
+
 export const modelToDbObject = (model: Record): RecordDbObject => {
   return {
     id: model.id,
@@ -32,7 +45,9 @@ export const modelToDbObject = (model: Record): RecordDbObject => {
   };
 };
 
-export const dbObjectToModel = (dbObject: PrismaRecord): Record =>
+export const dbObjectToModel = (
+  dbObject: PrismaRecord & { operation: any }
+): Record =>
   new Record(
     {
       newUserBalance: dbObject.newUserBalance.toNumber(),
@@ -40,6 +55,7 @@ export const dbObjectToModel = (dbObject: PrismaRecord): Record =>
       operationArgs: dbObject.operationArgs as any[],
       operationResult: dbObject.operationResult as any,
       operationId: dbObject.operationId,
+      operationType: dbObject.operation.type,
       date: dbObject.date,
       userId: dbObject.userId,
       cost: dbObject.cost.toNumber(),
@@ -59,6 +75,7 @@ export default class PrismaRecordsRepository
   async create(params: Partial<Record>): Promise<Record> {
     const data = await this.client.record.create({
       data: modelToDbObject(params as Record),
+      select: fieldsToDisplay,
     });
     return dbObjectToModel(data);
   }
@@ -72,6 +89,7 @@ export default class PrismaRecordsRepository
         where: searchParams,
       }),
       this.client.record.findMany({
+        select: fieldsToDisplay,
         where: searchParams,
         skip: paginatedParams?.skip,
         take: paginatedParams?.limit,
@@ -111,6 +129,9 @@ export default class PrismaRecordsRepository
   async findOne(params: SearchParams<Record>): Promise<Record | undefined> {
     const result = await this.client.record.findFirst({
       where: params,
+      include: {
+        operation: true,
+      },
     });
     return (result && dbObjectToModel(result)) || undefined;
   }
@@ -128,6 +149,7 @@ export default class PrismaRecordsRepository
     const result = await this.client.record.update({
       where: params,
       data: updateParams,
+      include: fieldsToDisplay,
     });
     return dbObjectToModel(result);
   }

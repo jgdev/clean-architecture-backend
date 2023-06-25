@@ -1,12 +1,13 @@
 import debug from "debug";
 import dotenv from "dotenv";
 import { createApi } from ".";
-import { APP_NAME, httpLogger } from "@/core/utils/logger";
+import { APP_NAME, bootstrapLogger, httpLogger } from "@/core/utils/logger";
 import { prepareTestEnvironment } from "@/test/unit/utils/InMemory.bootstrap";
 
 dotenv.config();
 
-if (!process.env.DEBUG) debug.enable(`${APP_NAME}:info*,${APP_NAME}:error*`);
+if (!process.env.DEBUG)
+  debug.enable(`${APP_NAME}:info*,${APP_NAME}:error*,${APP_NAME}:warn*`);
 
 export const getDependencies = async () => {
   const apiDependencies = await prepareTestEnvironment();
@@ -20,4 +21,4 @@ export const getDependencies = async () => {
   api.listen(httpPort, () => {
     httpLogger.info(`Api service running in http://localhost:${httpPort}/`);
   });
-})().catch(console.error);
+})().catch(bootstrapLogger.error);

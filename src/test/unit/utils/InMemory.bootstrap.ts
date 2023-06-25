@@ -2,9 +2,10 @@ import SessionService from "@/core/services/auth/SessionService";
 import createInMemoryRepository, {
   createInMemoryRecordEntityRepository,
 } from "./InMemoryRepository";
-import { createInMemoryCacheRepository } from "./InMemoryCacheRepository";
+import createInMemoryCacheRepository from "./InMemoryCacheRepository";
 import Operation, { OperationType } from "@/core/entities/Operation";
 import User, { UserStatus } from "@/core/entities/User";
+import { checkLiveUser } from "@/lib/liveSession";
 
 export const prepareTestEnvironment = async () => {
   const cacheRepository = createInMemoryCacheRepository();
@@ -15,7 +16,7 @@ export const prepareTestEnvironment = async () => {
     }),
     new Operation({
       cost: 20,
-      type: OperationType.SUBSTRACTION,
+      type: OperationType.SUBTRACTION,
     }),
     new Operation({
       cost: 50,
@@ -36,23 +37,24 @@ export const prepareTestEnvironment = async () => {
   ]);
   const recordsRepository =
     createInMemoryRecordEntityRepository(operationsRepository);
-  const testUser = new User({
-    balance: 200,
-    email: "test@test",
-    status: UserStatus.ACTIVE,
-  });
-  await testUser.setPassword("test123");
-  const usersRepository = createInMemoryRepository<User>([testUser]);
+  const usersRepository = createInMemoryRepository<User>([]);
   const sessionService = new SessionService({
     cacheRepository,
     usersRepository,
   });
-  return {
+
+  const deps = {
     cacheRepository,
     recordsRepository,
     usersRepository,
     sessionService,
     operationsRepository,
+  };
+
+  const testUser = await checkLiveUser(deps);
+
+  return {
+    ...deps,
     testUser,
   };
 };

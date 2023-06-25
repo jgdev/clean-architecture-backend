@@ -1,10 +1,9 @@
 import { Context, Next } from "koa";
-import { randomUUID } from "crypto";
 
 import AuthorizationError from "@/core/errors/AuthorizationError";
 import { ErrorCode } from "@/core/errors";
 
-import { Api, ApiDeps } from "..";
+import { ApiDeps } from "..";
 
 export const createSessionMiddleware = (deps: ApiDeps, skipAuth: boolean) => {
   return {
@@ -14,7 +13,7 @@ export const createSessionMiddleware = (deps: ApiDeps, skipAuth: boolean) => {
 
       if (skipAuth) {
         user = await deps.usersRepository.findOne({});
-        sessionId = randomUUID();
+        sessionId = await deps.sessionService.createSession(user?.email!);
       } else {
         if (!sessionId) {
           throw new AuthorizationError({

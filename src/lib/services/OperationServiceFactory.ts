@@ -25,7 +25,7 @@ export default class OperationServiceFactory {
         return new RandomORGOperationRandomString();
       case OperationType.SQUARE_ROOT:
         return new OperationSquareRootImpl();
-      case OperationType.SUBSTRACTION:
+      case OperationType.SUBTRACTION:
         return new OperationSubstractImpl();
       default:
         throw new Error("Operation type not supported");

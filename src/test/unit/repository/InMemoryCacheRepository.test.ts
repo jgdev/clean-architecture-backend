@@ -1,4 +1,4 @@
-import { createInMemoryCacheRepository } from "../utils/InMemoryCacheRepository";
+import createInMemoryCacheRepository from "../utils/InMemoryCacheRepository";
 
 describe("InMemoryCacheRepository", () => {
   test("should set an entry cache", async () => {

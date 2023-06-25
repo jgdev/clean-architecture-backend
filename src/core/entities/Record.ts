@@ -9,6 +9,7 @@ export default class Record {
   newUserBalance!: number;
   operationArgs!: any;
   operationResult!: any;
+  operationType?: string;
   date!: Date;
 
   constructor(record: Omit<Record, "id">, id?: string) {

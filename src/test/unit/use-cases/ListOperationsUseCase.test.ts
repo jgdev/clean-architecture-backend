@@ -1,21 +1,21 @@
-import Operation, { OperationType } from '@/core/entities/Operation';
-import createInMemoryRepository from '../utils/InMemoryRepository';
-import ListOperaitonsUseCase from '@/core/use-cases/ListOperationsUseCase';
+import Operation, { OperationType } from "@/core/entities/Operation";
+import createInMemoryRepository from "../utils/InMemoryRepository";
+import ListOperaitonsUseCase from "@/core/use-cases/ListOperationsUseCase";
 
-describe('UseCase - ListOperations', () => {
-  test('should retrieve all operations', async () => {
+describe("UseCase - ListOperations", () => {
+  test("should retrieve all operations", async () => {
     const operationsRepository = createInMemoryRepository<Operation>([
       new Operation({
         cost: 100,
-        type: OperationType.ADDITION
+        type: OperationType.ADDITION,
       }),
       new Operation({
         cost: 200,
-        type: OperationType.SUBSTRACTION
-      })
+        type: OperationType.SUBTRACTION,
+      }),
     ]);
     const listOperationsUseCase = new ListOperaitonsUseCase({
-      operationsRepository
+      operationsRepository,
     });
     const result = await listOperationsUseCase.execute({});
     expect(result.result).toMatchObject([
@@ -23,8 +23,8 @@ describe('UseCase - ListOperations', () => {
       {
         id: expect.any(String),
         cost: 200,
-        type: OperationType.SUBSTRACTION
-      }
+        type: OperationType.SUBTRACTION,
+      },
     ]);
   });
 });

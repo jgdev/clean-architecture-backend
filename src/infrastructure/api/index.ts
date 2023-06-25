@@ -15,6 +15,7 @@ import loggerMiddleware from "./middlewares/logger";
 
 import v1Routers from "./routes/v1";
 import v2Routers from "./routes/v2";
+import { httpLogger } from "@/core/utils/logger";
 
 export type ApiDeps = {
   usersRepository: IEntityRepository<User>;
@@ -41,6 +42,23 @@ export const createApi = (deps: ApiDeps, skipAuth: boolean) => {
 
   app.withSession = withSession;
 
+  if (skipAuth)
+    httpLogger.warn("Skip auth is enabled, bypassing session validation");
+
+  app.use(async (ctx, next) => {
+    // delay response
+    await new Promise((resolve) =>
+      setTimeout(() => {
+        resolve(undefined);
+      }, 200)
+    );
+    await next();
+  });
+  app.use((ctx, next) => {
+    ctx.set("Access-Control-Allow-Origin", "*");
+    ctx.set("Access-Control-Allow-Headers", "*");
+    return next();
+  });
   app.use(KoaBody());
 
   app.use(responseMiddleware);

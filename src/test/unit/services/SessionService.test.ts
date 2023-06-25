@@ -8,7 +8,7 @@ import SessionService, {
 } from "@/core/services/auth/SessionService";
 
 import createInMemoryRepository from "../utils/InMemoryRepository";
-import { createInMemoryCacheRepository } from "../utils/InMemoryCacheRepository";
+import createInMemoryCacheRepository from "../utils/InMemoryCacheRepository";
 
 describe("Service - SessionService", () => {
   let usersRepository: IEntityRepository<User>;
@@ -91,17 +91,22 @@ describe("Service - SessionService", () => {
     expect(Object.keys(sessions).includes(sessionToRemove)).toBe(false);
   });
 
-  test("shoudl return an User using the sessionId", async () => {
+  test("shoudl return an User using the sessionId, removing the password field", async () => {
     const fakeUser2 = await usersRepository.create(
-      new User({
-        balance: 0,
-        email: "test2@test",
-        status: UserStatus.ACTIVE,
-      })
+      new User(
+        {
+          balance: 0,
+          email: "test2@test",
+          status: UserStatus.ACTIVE,
+        },
+        undefined,
+        "some-password"
+      )
     );
     const sessionId = await sessionService.createSession(fakeUser2.email);
     const user = await sessionService.getUserBySessionId(sessionId);
     expect(user.id).toBe(fakeUser2.id);
+    expect(user.password).toBe(undefined);
   });
 
   test("should throw an Error if the user is in an invalid status", async () => {

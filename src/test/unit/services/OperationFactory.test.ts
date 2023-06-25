@@ -29,10 +29,10 @@ describe("Operations", () => {
       }
     });
   });
-  describe("Substraction", () => {
+  describe("SUBTRACTION", () => {
     beforeEach(() => {
       operation = OperationServiceFactory.getOperationByType(
-        OperationType.SUBSTRACTION
+        OperationType.SUBTRACTION
       );
     });
     it("should substract arguments", async () => {
