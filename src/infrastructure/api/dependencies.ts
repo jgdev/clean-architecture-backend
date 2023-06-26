@@ -14,7 +14,9 @@ export const getDependencies = async () => {
   await prismaClient.$connect();
 
   // connect to cache
-  const redisClient = createClient();
+  const redisClient = createClient({
+    url: process.env.REDIS_URI,
+  });
   redisClient.on("error", redisCacheLogger.error);
   await redisClient.connect();
 

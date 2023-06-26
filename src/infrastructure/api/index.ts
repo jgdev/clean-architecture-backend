@@ -1,4 +1,5 @@
 import Koa, { Context } from "koa";
+import koaHelmet from "koa-helmet";
 import KoaBody from "koa-bodyparser";
 
 import Operation from "@/core/entities/Operation";
@@ -14,7 +15,7 @@ import createSessionMiddleware from "./middlewares/session";
 import loggerMiddleware from "./middlewares/logger";
 
 import v1Routers from "./routes/v1";
-import { httpLogger, APP_NAME } from "@/core/utils/logger";
+import { httpLogger } from "@/core/utils/logger";
 
 export type ApiDeps = {
   usersRepository: IEntityRepository<User>;
@@ -44,18 +45,16 @@ export const createApi = (deps: ApiDeps, skipAuth: boolean) => {
   if (skipAuth)
     httpLogger.warn("Skip auth is enabled, bypassing session validation");
 
-  app.use(async (ctx, next) => {
-    // delay response
-    await new Promise((resolve) =>
-      setTimeout(() => {
-        resolve(undefined);
-      }, 200)
-    );
-    await next();
-  });
+  app.use(koaHelmet());
   app.use((ctx, next) => {
-    ctx.set("Access-Control-Allow-Origin", "*");
-    ctx.set("Access-Control-Allow-Headers", "*");
+    if (process.env.CORS_ALLOWED_HOSTS) {
+      const origin = ctx.request.get("origin");
+      const allowedHosts = process.env.CORS_ALLOWED_HOSTS.split(",");
+      if (allowedHosts.includes(origin)) {
+        ctx.set("Access-Control-Allow-Origin", origin);
+        ctx.set("Access-Control-Allow-Headers", "*");
+      }
+    }
     return next();
   });
   app.use(KoaBody());
