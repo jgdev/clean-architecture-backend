@@ -38,4 +38,5 @@ model Record {
   operationArgs   Json
   operationResult Json
   date            DateTime  @default(now())
+  isDeleted       Boolean   @default(false)
 }

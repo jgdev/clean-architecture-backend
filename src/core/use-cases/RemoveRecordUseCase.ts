@@ -35,9 +35,13 @@ export default class RemoveRecordUseCase {
     if (!record || record.userId !== user.id)
       throw new NotFoundError("Record not found");
 
-    await this.recordsRepository.remove({
-      id: params.recordId,
-      userId: user.id,
-    });
+    await this.recordsRepository.update(
+      {
+        id: params.recordId,
+      },
+      {
+        isDeleted: true,
+      }
+    );
   }
 }

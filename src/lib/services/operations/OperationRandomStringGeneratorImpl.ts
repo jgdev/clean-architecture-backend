@@ -11,6 +11,7 @@ export default class OperationRandomStringGeneratorImpl
       upperCase = true,
       lowerCase = true,
       numeric = true,
+      symbols = true,
     ] = args;
 
     if (!length) throw new ValidatorError("Invalid random string length");
@@ -24,6 +25,7 @@ export default class OperationRandomStringGeneratorImpl
     if (alphabetic && lowerCase) s += "abcdefghijklmnopqrstuvwxyz";
     if (alphabetic && upperCase) s += "ABCDEFGHIJKLMOPQRSTUVWXYZ";
     if (numeric) s += "0123456789";
+    if (symbols) s += "!@#$%^&*()-_+=<>?¿,.";
 
     return s;
   }

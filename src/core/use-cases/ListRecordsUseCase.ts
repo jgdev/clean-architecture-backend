@@ -38,6 +38,7 @@ export default class ListRecordsUseCase {
         params.operationType,
         {
           userId: user.id,
+          isDeleted: false,
         },
         paginatedParams
       );
@@ -46,6 +47,7 @@ export default class ListRecordsUseCase {
     return this.recordsRepository.findAll(
       {
         userId: user.id,
+        isDeleted: false,
       },
       paginatedParams
     );

@@ -79,7 +79,9 @@ describe("UseCase - List Records", () => {
       recordId: fakeRecords[0].id,
       userId: fakeUser.id,
     });
-    expect(testRepository.records.length).toBe(1);
+    expect(
+      testRepository.records.filter((record) => !record.isDeleted).length
+    ).toBe(1);
   });
 
   it("should return if tries to remove a record of another user", async () => {

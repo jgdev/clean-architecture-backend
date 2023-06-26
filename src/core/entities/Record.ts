@@ -11,9 +11,11 @@ export default class Record {
   operationResult!: any;
   operationType?: string;
   date!: Date;
+  isDeleted?: boolean;
 
   constructor(record: Omit<Record, "id">, id?: string) {
     Object.assign(this, record);
     this.id = id || randomUUID();
+    this.isDeleted = record.isDeleted || false;
   }
 }

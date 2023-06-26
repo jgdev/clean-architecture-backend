@@ -29,6 +29,7 @@ const fieldsToDisplay = {
   operationId: true,
   operationResult: true,
   userId: true,
+  isDeleted: true,
 };
 
 export const modelToDbObject = (model: Record): RecordDbObject => {
@@ -42,6 +43,7 @@ export const modelToDbObject = (model: Record): RecordDbObject => {
     date: new Date(model.date),
     userId: model.userId,
     cost: new Prisma.Decimal(model.cost),
+    isDeleted: !!model.isDeleted,
   };
 };
 
@@ -148,11 +150,15 @@ export default class PrismaRecordsRepository
     params: SearchParams<Record>,
     updateParams: Partial<Record>
   ): Promise<Record> {
-    const result = await this.client.record.update({
-      where: params,
-      data: updateParams,
-      include: fieldsToDisplay,
-    });
-    return dbObjectToModel(result);
+    return await this.client.record
+      .update({
+        where: params,
+        data: updateParams,
+        include: {
+          operation: true,
+          user: true,
+        },
+      })
+      .then(dbObjectToModel);
   }
 }
