@@ -22,7 +22,10 @@ export default class OperationServiceFactory {
       case OperationType.RANDOM_STRING:
         return new OperationRandomStringGeneratorImpl();
       case OperationType.RANDOM_STRING_V2:
-        return new RandomORGOperationRandomString();
+        return new RandomORGOperationRandomString(
+          process.env.RANDOM_ORG_API_URL,
+          process.env.RANDOM_ORG_API_KEY
+        );
       case OperationType.SQUARE_ROOT:
         return new OperationSquareRootImpl();
       case OperationType.SUBTRACTION:
