@@ -138,7 +138,9 @@ export default class PrismaRecordsRepository
 
   async remove(params: SearchParams<Record>): Promise<void> {
     await this.client.record.delete({
-      where: params,
+      where: {
+        id: params.id,
+      },
     });
   }
 

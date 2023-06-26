@@ -50,7 +50,7 @@ export const v1Routers = (app: Api, apiDeps: ApiDeps) => {
     await next();
   });
 
-  router.del(
+  router.delete(
     "/records/:recordId",
     app.withSession,
     async (ctx: Context, next: Next) => {

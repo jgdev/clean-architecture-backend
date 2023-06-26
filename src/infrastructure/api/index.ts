@@ -53,6 +53,7 @@ export const createApi = (deps: ApiDeps, skipAuth: boolean) => {
       if (allowedHosts.includes(origin)) {
         ctx.set("Access-Control-Allow-Origin", origin);
         ctx.set("Access-Control-Allow-Headers", "*");
+        ctx.set("Access-Control-Allow-Methods", "*");
       }
     }
     return next();
