@@ -55,6 +55,7 @@
     "prettier": "^2.8.8",
     "prisma": "^4.16.1",
     "redis": "^4.6.7",
+    "semver": "^7.5.2",
     "serverless-http": "^3.2.0"
   }
 }
