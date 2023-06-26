@@ -3,3 +3,6 @@ dist
 *.swp
 .env
 coverage
+.serverless
+.tmp
+.DS_Store

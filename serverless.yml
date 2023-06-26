@@ -1,0 +1,34 @@
+service: truenorth-code-challenge-backend
+provider:
+  name: aws
+  runtime: nodejs18.x
+  deploymentMethod: direct
+
+package:
+  patterns:
+    - "!*"
+    - "!prisma/**"
+    - "!coverage/**"
+    - "!src/**"
+    - "node_modules/**"
+    - "dist/**"
+
+functions:
+  server:
+    handler: dist/infrastructure/api/serverless.handler
+    events:
+      - http:
+          path: / # this matches the base path
+          method: ANY
+      - http:
+          path: /{any+} # this matches any path, the token 'any' doesn't mean anything special
+          method: ANY
+plugins:
+  - serverless-offline
+# functions:
+#   hello:
+#     handler: dist/infrastructure/api/serverless.default
+#     events:
+#       - http: GET /plain
+# server:
+#   handler: dist/infrastructure/bootrstrap.serverless

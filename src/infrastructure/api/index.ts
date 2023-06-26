@@ -14,8 +14,7 @@ import createSessionMiddleware from "./middlewares/session";
 import loggerMiddleware from "./middlewares/logger";
 
 import v1Routers from "./routes/v1";
-import v2Routers from "./routes/v2";
-import { httpLogger } from "@/core/utils/logger";
+import { httpLogger, APP_NAME } from "@/core/utils/logger";
 
 export type ApiDeps = {
   usersRepository: IEntityRepository<User>;
