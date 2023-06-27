@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:15-alpine:latest
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD: test123
+      - POSTGRES_DB: truenorth_code_challenge
+  redis:
+    container_name: reids
+    image: redis/redis-stack-server:latest
+    ports:
+      - "6379:6379"
+    restart: always

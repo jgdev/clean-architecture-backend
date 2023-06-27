@@ -15,7 +15,7 @@ export const getDependencies = async () => {
 
   // connect to cache
   const redisClient = createClient({
-    url: process.env.REDIS_URI,
+    url: process.env.REDIS_URL,
   });
   redisClient.on("error", redisCacheLogger.error);
   await redisClient.connect();
