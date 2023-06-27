@@ -49,6 +49,7 @@ export const prepareTestEnvironment = async () => {
     usersRepository,
     sessionService,
     operationsRepository,
+    shutdown: async () => {},
   };
 
   const testUser = await checkLiveUser(deps);

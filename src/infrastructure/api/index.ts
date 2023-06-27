@@ -23,6 +23,7 @@ export type ApiDeps = {
   recordsRepository: IRecordEntityRepository;
   cacheRepository: ICacheRepository;
   sessionService: SessionService;
+  shutdown: () => Promise<void>;
 };
 
 export type ApiContext = Context & {

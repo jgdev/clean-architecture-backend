@@ -7,8 +7,9 @@ import RedisCacheRepository from "@/infrastructure/database/RedisCacheRepository
 import PrismaOperationsRepository from "@/infrastructure/database/PrismaOperationsRepository";
 import PrismaRecordsRepository from "@/infrastructure/database/PrismaRecordsRepository";
 import PrismaUsersRepository from "@/infrastructure/database/PrismaUsersRepository";
+import { ApiDeps } from ".";
 
-export const getDependencies = async () => {
+export const getDependencies = async (): Promise<ApiDeps> => {
   // connect to database
   const prismaClient = new PrismaClient();
   await prismaClient.$connect();
@@ -35,6 +36,10 @@ export const getDependencies = async () => {
     recordsRepository,
     usersRepository,
     sessionService,
+    shutdown: async () => {
+      await redisClient.disconnect();
+      await prismaClient.$disconnect();
+    },
   };
 
   return deps;
