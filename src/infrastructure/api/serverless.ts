@@ -13,10 +13,11 @@ export const handler = async (event: any, context: any) => {
   try {
     const api = createApi(deps, !!process.env.SKIP_AUTH);
     const execHandler = serverless(api);
-    return execHandler(event, context);
+    const result = await execHandler(event, context);
+    deps.shutdown();
+    return result;
   } catch (err) {
     bootstrapLogger.error(err);
-  } finally {
-    await deps.shutdown();
+    deps.shutdown();
   }
 };
