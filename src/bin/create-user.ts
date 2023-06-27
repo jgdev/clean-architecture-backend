@@ -39,7 +39,10 @@ const main = async () => {
         },
       },
       async (err, result) => {
-        if (err) return reject(err);
+        if (err) {
+          if (err.message === "canceled") return resolve(null);
+          return reject(err);
+        }
 
         try {
           const user = new User({

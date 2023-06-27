@@ -15,7 +15,8 @@
     "build": "tsc && tsc-alias && chmod +x ./dist/bin/*",
     "migration:check": "prisma migrate dev",
     "migration:apply": "prisma migrate deploy",
-    "migration:generate": "prisma generate"
+    "migration:generate": "prisma generate",
+    "create-user": "./dist/bin/create-user.js"
   },
   "keywords": [],
   "author": "Joan Gabriel Peralta Santana <joanperalta13@gmail.com>",

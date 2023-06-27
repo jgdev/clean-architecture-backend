@@ -41,4 +41,5 @@ Take a look at `.env.example` for details
 - `npm run build`: Create a production ready build.
 - `npm run test`: Run test coverage
 - `npm run serverless:deploy` Create a serverless deployment on AWS, `dev` stage is default, you can modify the details modifying the `serverless.yml` file.
+- `npm run create-user` Run a CLI tool for user credentials creation.
 
