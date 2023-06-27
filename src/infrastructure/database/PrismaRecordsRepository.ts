@@ -86,6 +86,17 @@ export default class PrismaRecordsRepository
     searchParams?: SearchParams<Record> | undefined,
     paginatedParams?: PaginatedParams<Record> | undefined
   ): Promise<PaginatedResult<Record>> {
+    let orderBy = {};
+
+    if (paginatedParams?.orderBy) {
+      const sort = paginatedParams?.sortBy || "desc";
+      orderBy = {
+        ...(paginatedParams.orderBy === "operationType"
+          ? { operation: { type: sort } }
+          : { [paginatedParams.orderBy]: sort }),
+      };
+    }
+
     const results = await this.client.$transaction([
       this.client.record.count({
         where: searchParams,
@@ -95,9 +106,7 @@ export default class PrismaRecordsRepository
         where: searchParams,
         skip: paginatedParams?.skip,
         take: paginatedParams?.limit,
-        orderBy: paginatedParams?.orderBy && {
-          [paginatedParams?.orderBy]: paginatedParams?.sortBy || "desc",
-        },
+        orderBy,
       }),
     ]);
 
