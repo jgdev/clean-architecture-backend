@@ -14,9 +14,9 @@
     "noImplicitAny": true,
     "skipLibCheck": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
     }
   },
-  "include": ["src/**/*.ts", "./env.d.ts"],
+  "include": ["src/**/*.ts", "./env.d.ts", "../prisma"],
   "exclude": ["node_modules"]
 }

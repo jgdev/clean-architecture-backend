@@ -35,7 +35,7 @@ export default class RandomORGOperationRandomString extends OperationRandomStrin
           apiKey: this.apiKey,
           n: 1,
           length,
-          characters: characters,
+          characters,
           replacement: true,
           pregeneratedRandomization: null,
         },

@@ -40,10 +40,6 @@ export default class CreateRecordUseCase {
     const user = await this.usersRepository.findOne({ id: params.userId });
     if (!user) throw new NotFoundError("User not found");
 
-    const operationResult = await OperationServiceFactory.getOperationByType(
-      operation!.type
-    ).perform(params.operationArgs);
-
     const newUserBalance = user.balance - operation.cost;
 
     if (newUserBalance < 0)
@@ -51,11 +47,16 @@ export default class CreateRecordUseCase {
         "The user does not have enought balance to perform this operation"
       );
 
+    const operationResult = await OperationServiceFactory.getOperationByType(
+      operation!.type
+    ).perform(params.operationArgs);
+
     const record = new Record({
       userId: user.id,
       operationId: operation.id,
       cost: operation.cost,
       date: new Date(),
+      operationType: operation.type,
       operationArgs: params.operationArgs,
       operationResult,
       oldUserBalance: user.balance,

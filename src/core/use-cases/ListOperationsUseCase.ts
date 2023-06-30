@@ -14,6 +14,8 @@ export default class ListOperaitonsUseCase {
   async execute(
     paginatedParams?: PaginatedParams<Operation>
   ): Promise<ListOperationsDTO> {
-    return this.operationsRepository.findAll({}, paginatedParams);
+    const result = await this.operationsRepository.findAll({}, paginatedParams);
+    console.log(JSON.stringify(result, null, 2));
+    return result;
   }
 }

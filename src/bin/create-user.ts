@@ -31,6 +31,10 @@ const main = async () => {
             hidden: true,
             required: true,
           },
+          repeatPassword: {
+            hidden: true,
+            required: true,
+          },
           balance: {
             message: "Initial user balance",
             default: 0,
@@ -42,6 +46,10 @@ const main = async () => {
         if (err) {
           if (err.message === "canceled") return resolve(null);
           return reject(err);
+        }
+
+        if (result.password !== result.repeatPassword) {
+          return reject(new Error("Passwords do not match"));
         }
 
         try {

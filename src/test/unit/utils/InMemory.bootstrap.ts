@@ -34,6 +34,10 @@ export const prepareTestEnvironment = async () => {
       cost: 100,
       type: OperationType.RANDOM_STRING,
     }),
+    new Operation({
+      cost: 120,
+      type: OperationType.RANDOM_STRING_V2,
+    }),
   ]);
   const recordsRepository =
     createInMemoryRecordEntityRepository(operationsRepository);
